@@ -4,9 +4,9 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://psuedoo.github.io",
+  site: "https://blog.psuedo.dev",
   // Only use base path in production (GitHub Pages)
-  base: process.env.NODE_ENV === "production" ? "/blog" : "/",
+  // base: process.env.NODE_ENV === "production" ? "/blog" : "/",
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
