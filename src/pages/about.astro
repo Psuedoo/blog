@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const socials = [
+  { title: "Discord", username: "_psuedo", url: "https://discord.gg/UcFgW6A" },
+  { title: "GitHub", username: "psuedoo", url: "https://github.com/psuedoo/" },
+  { title: "Twitch", username: "psuedoo", url: "https://twitch.tv/psuedoo" },
+];
+---
+
+<BaseLayout title="About">
+  <div class="page">
+    <h1>Psuedo - The Pragmatic Engineer</h1>
+    <h2>Hi, I'm Psuedo.</h2>
+
+    <!-- Another easter egg lol -->
+    <!-- <p>Not sure how or why you've ended up on my blog, <em>and</em> why you've clicked to learn more about me, but I suppose I'll give you what you're looking for.</p> -->
+
+    <p>
+      As the title of this page suggests, I am historically a pragmatic
+      engineer. I typically approach problems at how to solve them rather than
+      theorizing about the <em>what ifs</em>. This isn't to say I don't think
+      through and plan solutions.. I just strive to pick the <a
+        href="https://en.wikipedia.org/wiki/Occam%27s_razor"
+        >simplest solution</a
+      >. I also believe in <a href="https://personalmba.com/galls-law/"
+        >Gall's Law</a
+      >. (tldr: all complex systems are derived from once working simple
+      solutions.)
+    </p>
+
+    <p>
+      I was going to put some of my skills and hobbies but those lists are
+      always changing. If you're interested in learning more of those things,
+      message me and let's chat. Discord is probably my most used form of
+      communication. Otherwise, you can probably insinuate what I enjoy/what I'm
+      doing from my blog posts.
+    </p>
+
+    <p>
+      A quick disclaimer is that I'm viewing this blog as something I can write
+      once and share many times. I'm wanting to build out helpful resources for
+      the people I mentor (and for those of you who may stumble across this).
+      Because of that, sometimes I may learn something new or have updates, thus
+      you might find some of my blogs will have updates. That also depends on
+      how lazy I am. Since this blog is going to be open to the public, the
+      <a href="https://github.com/psuedoo/blog">GitHub repo</a> will be too. Feel
+      free to make pull requests to contribute things you wish were different!
+    </p>
+
+    <h2>Socials</h2>
+    <sub>Click the tiles!</sub>
+    <div>
+      {
+        socials.map((social) => (
+          <figure style="padding: 3px;">
+            <a href={social.url}>
+              <figcaption>{social.title}</figcaption>
+            </a>
+            <h4>{social.username}</h4>
+          </figure>
+        ))
+      }
+    </div>
+
+    <!-- Commenting this out, but if you find it in the source, it was in the template :) -->
+    <!-- <p> -->
+    <!--   This is the Astro Terminal theme, a port of the fantastic -->
+    <!--   <a href="https://github.com/panr/hugo-theme-terminal" target="_blank" rel="noopener">Hugo Terminal theme</a> -->
+    <!--   created by <a href="https://github.com/panr" target="_blank" rel="noopener">panr</a>. -->
+    <!-- </p> -->
+    <!--  -->
+    <!-- <p> -->
+    <!--   The Astro version maintains all the great features of the original theme whilst using Astro's modern  -->
+    <!--   static site generation capabilities. -->
+    <!-- </p> -->
+    <!--  -->
+    <!-- <p> -->
+    <!--   The theme features syntax highlighting with Shiki, customisable colour schemes via -->
+    <!--   <a href="https://panr.github.io/terminal-css/" target="_blank" rel="noopener">Terminal.css</a>, -->
+    <!--   Fira Code monospace font, and a beautiful retro terminal aesthetic. -->
+    <!-- </p> -->
+    <!--  -->
+    <!-- <p> -->
+    <!--   Ported to Astro by <a href="https://github.com/dennisklappe" target="_blank" rel="noopener">Dennis Klappe</a>. -->
+    <!-- </p> -->
+  </div>
+
+  <style>
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Psuedo's Blog">
+  <div class="index-content framed">
+    <h1 id="hello-there">Hi there!</h1>
+    <p>
+      Welcome to my lil corner of the internet! This is a place where I will
+      (well, plan to) post some various stuff that has helped me or things that
+      I believe could help others.
+    </p>
+    <p>
+      The things on this blog are maybe pulled from other places or from my
+      brain. With that in mind, I'm a pragmatic engineer with a focus on getting
+      things done. By no means are these things the "end all be all". Please
+      only use things found here after consideration and a note from your doctor
+      or therapist.
+    </p>
+  </div>
+
+  <div class="posts">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</BaseLayout>

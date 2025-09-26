@@ -1,0 +1,13 @@
+---
+export interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+const formattedDate = date.toDateString();
+---
+
+<time datetime={date.toDateString()}>
+  {formattedDate}
+</time>
+
