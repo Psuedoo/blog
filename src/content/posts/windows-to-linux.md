@@ -1,5 +1,5 @@
 ---
-title: "Switching From Windows to Linux: Why I made the Jump to Linux Mint"
+title: "Why I Finally Ditched Windows for Linux Mint"
 description: "After years on Windows, I switched my daily driver to Linux Mint. Here's why I made the change, the steps I took, and whether you should daily drive Linux too."
 pubDate: 09-26-2025
 author: "Psuedo"
