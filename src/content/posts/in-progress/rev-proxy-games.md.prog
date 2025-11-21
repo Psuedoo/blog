@@ -1,0 +1,237 @@
+---
+title: "Game Servers Without Port Forwarding"
+description: "Port forwarding is scary. Opening your home network up to the 'bad guys'. This article explains my not so simple solution."
+pubDate: 09-29-2025
+author: "Psuedo"
+tags: ["tech", "homelab"]
+---
+
+## The Typical Route
+
+When everyone learns how to setup their first Minecraft (or any game)
+server, they want friends to join.
+
+You likely have setup a game server at some point to play
+with some friends. And when doing that you probably follwed a guide
+like [this](https://help.minecraft.net/hc/en-us/articles/360058525452-How-to-Setup-a-Minecraft-Java-Edition-Server).
+And in that guide it says:
+
+> You will also need to forward the port ...
+
+While forwarding a port isn't inherently dangerous, it can create
+a new point of security risk. Along with the fact that you will have
+to share your public (home) IP address for anyone to join you.
+I hope your security doesn't suck while running that combo. ;)
+
+## The Setup
+
+### Game Server
+
+The first thing you need is a game server. I personally use CubeCoders AMP (TODO: add link)
+for my game server needs. AMP offers a decent UI and allows me to let my friends
+start game servers.
+
+### Domain
+
+A domain is going to give our users something pretty to look at. Buying a domain
+could be optional, but a domain can be _very_ cheap.
+
+I own all of my domains through Cloudflare.
+
+### Offsite for Reverse Proxy
+
+---
+
+General notes:
+
+- Linode to run to SWAG Nginx
+- Cloudflare DNS pointing to Linode IP
+  - `A` record with `minecraft` -> Linode IP
+  - Turn off Proxy. Do DNS only.
+- You need a `stream.conf` with some server stuff in `./config/nginx/stream.conf`
+- You may need to add an `include blah blah` in `./config/nginx/nginx.conf`
+- You will need to add the port mapping to the SWAG docker container
+- You need tailscale installed on Linode and game server host
+
+Things this guide won't be:
+
+- A SWAG guide
+- A docker guide
+- A networking guide
+
+`docker-compose.yml`
+
+```yaml
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - URL=domain.com
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
+    volumes:
+      - ./config:/config
+    ports:
+      - "443:443"
+      # This is the Minecraft port to expose Nginx listening port.
+      - "25565:25565/tcp"
+      # - 80:80 #optional
+    restart: unless-stopped
+```
+
+`stream.conf`
+
+```
+stream {
+
+  // This is defining the server that is running minecraft. (You can actually)
+  // use this as a load balancer too.
+  // 'minecraft' is an arbitrary name that we have chosen.
+  upstream minecraft {
+
+    // This IP address is the Tailscale IP and port that Minecraft is running on.
+    server 100.100.100.100:25565;
+
+  }
+
+  // This instructs Nginx to listen on a certain port.
+  server {
+
+    // This should be 'listen <port>;'
+    // In this case, it's the Minecraft default port.
+    listen 25565;
+
+    // Set how long Nginx will wait
+    // for a connection attempt to succeed.
+    proxy_connect_timeout 1h;
+
+    // Forwards any incoming connection directly to the
+    // upstream group you defined above.
+    proxy_pass minecraft;
+
+  }
+}
+```
+
+`nginx.conf`
+
+```
+// All the other Nginx config goes here...
+// At the very bottom:
+include /config/nginx/stream.conf;
+```
+
+## Why Did I Switch?
+
+After a long day of work I would find myself playing video games to relax.
+While there's nothing wrong with playing video games,
+I would frequently look back and miss the curiosity I had.
+
+I used to be able to talk so in-depth about a new project, or
+something newly exciting I've learned. I could, but it was always about
+work projects. Rarely had it become anything I was doing outside of work.
+
+Finally, I decided that it was time to make it easier to do tech shenanigans
+than play my lil video games. Thus I installed Linux.
+
+## My Process
+
+This whole process was really terrifying. I have spent forever on Windows.
+Yes I have spun up Linux VMs and I have Linux running on servers..
+but I haven't had to do without Microsoft's opinion on everything.
+
+I was eager to come up with a plan to make this switch easier.
+However, with planning being the arch-enemy of doing, I had to be willing to make
+some sacrifices.
+
+I came up with an actionable plan.
+
+### Step 1. Back up my data
+
+This was rather simple. I just made sure that all of the files I cared about
+like images, documents, etc. were on cloud services or moved to an external
+hard drive.
+
+### Step 2. Pick a <mark>stable</mark> distro
+
+[EndeavourOS](https://endeavouros.com/) was running on my laptop for ~6 months.
+The distro was clean, nicely configured out of the box,
+and seemed to be a "trendy" distro. During the period when I was frequently
+using my laptop, Endeavour gave an awesome experience.
+
+A few months then went by without using my laptop. Booted it up.
+Updated everything, rebooted, then boom... it wouldn't boot.
+
+This was my hard-learned lesson about
+[rolling releases vs stable releases](https://www.youtube.com/watch?v=212yJEH8-iA).
+Instability was certainly _not_ something I was willing to fight with.
+
+Ubuntu has always been a tried and true distro for me. But lately I have been
+feeling like it's a little bloated.
+
+With all of the above in mind, I chose to go with [Linux Mint](https://linuxmint.com).
+At the time of posting this blog post, I am loving it.
+
+### Step 3. Setup boot drive
+
+Setting up a boot drive is a simple process. Rufus or Balena Etcher are 2 tools
+I use. There are tons of guides on how to do this exact thing
+(for example, [this one from Ubuntu](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows)).
+I might write a post on how to do this sometime in the future.
+But for now, just Google it. ;)
+
+### Step 4. Do the damn thing
+
+Procrastination can be a weak point of mine. There is no more preparing I can do
+at this point in the process.
+
+> The fear from pressing format on my Windows partition and
+> installing Linux was terrifying to say the least.
+
+## Current Reflection
+
+I've been daily driving Linux Mint for a few weeks now. I had to make sacrifices
+some of them being difficult. But I definitely have been more productive.
+Look, I've even set up a blog.. who saw that coming??
+
+## Should You Daily Drive Linux?
+
+This really just depends on what your goals are. Generally, I would say yes.
+
+### You should absolutely daily drive Linux if you
+
+- are newer to tech
+- don't know how to use Linux
+- have or want a career that will require Linux knowledge
+
+### Maybe daily drive Linux if you
+
+- are curious
+- want something new
+- need productivity accountability
+
+### You should _not_ daily drive Linux if you
+
+- hate computers
+- hate figuring anything out
+- have to play every single game
+
+---
+
+## Join the Conversation
+
+Have you considered making the switch? Or are you already daily driving Linux?
+I would love to hear about your setup. We've got a place to come chat about this
+and all other things, join us on the
+[Discord](https://discord.gg/ABGRpm8)!
+
+```
+
+```
